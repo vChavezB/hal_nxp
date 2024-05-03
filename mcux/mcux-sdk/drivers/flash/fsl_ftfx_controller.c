@@ -34,7 +34,7 @@
 #define FTFx_GENERATE_CRC                    0x0CU /*!< CRCGEN*/
 #define FTFx_VERIFY_ALL_BLOCK                0x40U /*!< RD1ALL*/
 #define FTFx_READ_ONCE                       0x41U /*!< RDONCE or RDINDEX*/
-#define FTFx_PROGRAM_ONCE                    0x43U /*!< PGMONCE or PGMINDEX*/
+#define FTFx_PROGRAM_ONCE                    0x43U /*!< PGMONCE or PGMINDEX*/ 
 #define FTFx_ERASE_ALL_BLOCK                 0x44U /*!< ERSALL*/
 #define FTFx_SECURITY_BY_PASS                0x45U /*!< VFYKEY*/
 #define FTFx_SWAP_CONTROL                    0x46U /*!< SWAP*/
@@ -191,6 +191,23 @@ static const uint32_t kDflashDensities[16] = {
 /*******************************************************************************
  * Code
  ******************************************************************************/
+#if defined(MCU_S32K142)
+static void update_flash_size(ftfx_config_t *config) 
+{
+    /* Temporary solution for FTFC and S32K142 CSEc part */
+    /* Get DEPART from Flash Configuration Register 1 */
+    uint8_t DEPartitionCode = (uint8_t)((IP_SIM->FCFG1 & SIM_FCFG1_DEPART_MASK) >> SIM_FCFG1_DEPART_SHIFT);
+    config->flashDesc.totalSize = kDflashDensities[DEPartitionCode];
+    if (config->flashDesc.totalSize < FSL_FEATURE_FLASH_FLEX_NVM_BLOCK_SIZE)
+    {
+        config->eepromTotalSize = FSL_FEATURE_FLASH_FLEX_RAM_SIZE;
+    }
+    else
+    {
+        config->eepromTotalSize = 0U;
+    }
+}
+#endif
 
 /*!
  * @brief Initializes the global flash properties structure members.
@@ -204,7 +221,9 @@ void FTFx_API_Init(ftfx_config_t *config)
     config->runCmdFuncAddr.callFlashCommand = NULL;
     config->flexramBlockBase                = FSL_FEATURE_FLASH_FLEX_RAM_START_ADDRESS;
     config->flexramTotalSize                = FSL_FEATURE_FLASH_FLEX_RAM_SIZE;
-
+#if defined(MCU_S32K142)
+    update_flash_size(config);
+#endif
     /* copy required flash command to RAM */
 #if FTFx_DRIVER_IS_FLASH_RESIDENT
     config->runCmdFuncAddr.commadAddr = (uint32_t)s_ftfxRunCommand;
@@ -214,19 +233,12 @@ void FTFx_API_Init(ftfx_config_t *config)
     ftfx_init_ifr(config);
 }
 
-#if defined(FSL_FEATURE_FLASH_HAS_FLEX_NVM) && FSL_FEATURE_FLASH_HAS_FLEX_NVM
+#if defined(FSL_FEATURE_FLASH_HAS_FLEX_NVM) && FSL_FEATURE_FLASH_HAS_FLEX_NVM && !defined(MCU_S32K142)
 /*!
  * @brief Updates FlexNVM memory partition status according to data flash 0 IFR.
  */
 status_t FTFx_API_UpdateFlexnvmPartitionStatus(ftfx_config_t *config)
 {
-    struct _dflash_ifr_field_config
-    {
-        uint32_t reserved0;
-        uint8_t FlexNVMPartitionCode;
-        uint8_t EEPROMDataSetSize;
-        uint16_t reserved1;
-    } dataIFRReadOut;
     uint32_t flexnvmInfoIfrAddr;
     status_t returnCode;
 
@@ -248,8 +260,7 @@ status_t FTFx_API_UpdateFlexnvmPartitionStatus(ftfx_config_t *config)
     }
 #else
 #error "Cannot get FlexNVM memory partition info"
-#endif /* FSL_FEATURE_FLASH_HAS_READ_RESOURCE_CMD */
-
+#endif
     /* Fill out partitioned EEPROM size */
     dataIFRReadOut.EEPROMDataSetSize &= 0x0FU;
     config->eepromTotalSize = kEepromDensities[dataIFRReadOut.EEPROMDataSetSize];
@@ -257,7 +268,6 @@ status_t FTFx_API_UpdateFlexnvmPartitionStatus(ftfx_config_t *config)
     /* Fill out partitioned DFlash size */
     dataIFRReadOut.FlexNVMPartitionCode &= 0x0FU;
     config->flashDesc.totalSize = kDflashDensities[dataIFRReadOut.FlexNVMPartitionCode];
-
     return kStatus_FTFx_Success;
 }
 #endif /* FSL_FEATURE_FLASH_HAS_FLEX_NVM */
@@ -372,7 +382,9 @@ status_t FTFx_CMD_EraseAll(ftfx_config_t *config, uint32_t key)
     }
 
     /* preparing passing parameter to erase all flash blocks */
-    kFCCOBx[0] = BYTE2WORD_1_3(FTFx_ERASE_ALL_BLOCK, 0xFFFFFFU);
+    //kFCCOBx[0] = BYTE2WORD_1_3(FTFx_ERASE_ALL_BLOCK, 0xFFFFFFU);
+
+    FTFx->FCCOB0 = FTFx_ERASE_ALL_BLOCK;
 
     /* Validate the user key */
     returnCode = ftfx_check_user_key(key);
@@ -384,7 +396,7 @@ status_t FTFx_CMD_EraseAll(ftfx_config_t *config, uint32_t key)
     /* calling flash command sequence function to execute the command */
     returnCode = ftfx_command_sequence(config);
 
-#if defined(FSL_FEATURE_FLASH_HAS_FLEX_NVM) && FSL_FEATURE_FLASH_HAS_FLEX_NVM
+#if defined(FSL_FEATURE_FLASH_HAS_FLEX_NVM) && FSL_FEATURE_FLASH_HAS_FLEX_NVM && !defined(MCU_S32K142)
     /* Data flash IFR will be erased by erase all command, so we need to
      *  update FlexNVM memory partition status synchronously */
     if (returnCode == kStatus_FTFx_Success)
@@ -425,7 +437,7 @@ status_t FTFx_CMD_EraseAllUnsecure(ftfx_config_t *config, uint32_t key)
     /* calling flash command sequence function to execute the command */
     returnCode = ftfx_command_sequence(config);
 
-#if defined(FSL_FEATURE_FLASH_HAS_FLEX_NVM) && FSL_FEATURE_FLASH_HAS_FLEX_NVM
+#if defined(FSL_FEATURE_FLASH_HAS_FLEX_NVM) && FSL_FEATURE_FLASH_HAS_FLEX_NVM && !defined(MCU_S32K142)
     /* Data flash IFR will be erased by erase all unsecure command, so we need to
      *  update FlexNVM memory partition status synchronously */
     if (returnCode == kStatus_FTFx_Success)
@@ -615,7 +627,7 @@ status_t FTFx_CMD_ProgramSection(ftfx_config_t *config, uint32_t start, const ui
     {
         needSwitchFlexRamMode = true;
 
-        returnCode = FTFx_CMD_SetFlexramFunction(config, kFTFx_FlexramFuncOptAvailableAsRam);
+        returnCode = FTFx_CMD_SetFlexramFunction(config, kFTFx_FlexramFuncOptAvailableAsRam,0 , NULL);
         if (returnCode != kStatus_FTFx_Success)
         {
             return returnCode;
@@ -690,7 +702,7 @@ status_t FTFx_CMD_ProgramSection(ftfx_config_t *config, uint32_t start, const ui
     /* Restore function of FlexRAM if needed. */
     if (needSwitchFlexRamMode)
     {
-        returnCode = FTFx_CMD_SetFlexramFunction(config, kFTFx_FlexramFuncOptAvailableForEeprom);
+        returnCode = FTFx_CMD_SetFlexramFunction(config, kFTFx_FlexramFuncOptAvailableForEeprom,0, NULL);
         if (returnCode != kStatus_FTFx_Success)
         {
             return returnCode;
@@ -725,18 +737,31 @@ status_t FTFx_CMD_ProgramPartition(ftfx_config_t *config,
     /* flexnvmPartitionCode bit with 0x0FU; */
 
     /* preparing passing parameter to program the flash block */
-    kFCCOBx[0] = BYTE2WORD_1_2_1(FTFx_PROGRAM_PARTITION, 0xFFFFU, option);
-    kFCCOBx[1] = BYTE2WORD_1_1_2(eepromDataSizeCode, flexnvmPartitionCode, 0xFFFFU);
+    //kFCCOBx[0] = BYTE2WORD_1_2_1(FTFx_PROGRAM_PARTITION, 0xFFFFU, option);
+    //kFCCOBx[1] = BYTE2WORD_1_1_2(eepromDataSizeCode, flexnvmPartitionCode, 0xFFFFU);
+
+    bool flexRamEnableLoadEEEData = false;
+    FTFx->FCCOB0 = FTFx_PROGRAM_PARTITION;
+    FTFx->FCCOB1 = 0b00; // Zeor Csec key size
+    FTFx->FCCOB2 = 0; // SFE = 0
+    FTFx->FCCOB3 = (uint8_t)(flexRamEnableLoadEEEData ? 0U : 1U);
+    FTFx->FCCOB4 = eepromDataSizeCode;
+    FTFx->FCCOB5 = flexnvmPartitionCode;
+
+
 
     /* calling flash command sequence function to execute the command */
     returnCode = ftfx_command_sequence(config);
 
-#if defined(FSL_FEATURE_FLASH_HAS_FLEX_NVM) && FSL_FEATURE_FLASH_HAS_FLEX_NVM
+#if defined(FSL_FEATURE_FLASH_HAS_FLEX_NVM) && FSL_FEATURE_FLASH_HAS_FLEX_NVM && !defined(MCU_S32K142)
     /* Data flash IFR will be updated by program partition command during reset sequence,
      * so we just set reserved values for partitioned FlexNVM size here */
     config->eepromTotalSize     = 0xFFFFU;
     config->flashDesc.totalSize = 0xFFFFFFFFU;
 #endif /* FSL_FEATURE_FLASH_HAS_FLEX_NVM */
+#if defined(MCU_S32K142)
+    update_flash_size(config);
+#endif
 
     return (returnCode);
 }
@@ -1111,7 +1136,7 @@ status_t FTFx_REG_GetSecurityState(ftfx_config_t *config, ftfx_security_state_t 
 /*!
  * @brief Sets the FlexRAM function command.
  */
-status_t FTFx_CMD_SetFlexramFunction(ftfx_config_t *config, ftfx_flexram_func_opt_t option)
+status_t FTFx_CMD_SetFlexramFunction(ftfx_config_t *config, ftfx_flexram_func_opt_t option, uint16_t quick_write_bytes, flash_eeprom_status_t * eeprom_status)
 {
     status_t status;
     if (config == NULL)
@@ -1126,10 +1151,35 @@ status_t FTFx_CMD_SetFlexramFunction(ftfx_config_t *config, ftfx_flexram_func_op
     }
 
     /* preparing passing parameter to verify all block command */
-    kFCCOBx[0] = BYTE2WORD_1_1_2(FTFx_SET_FLEXRAM_FUNCTION, option, 0xFFFFU);
+    //kFCCOBx[0] = BYTE2WORD_1_1_2(FTFx_SET_FLEXRAM_FUNCTION, option, 0xFFFFU);
+    FTFx->FCCOB0 = FTFx_SET_FLEXRAM_FUNCTION;
+    FTFx->FCCOB1 = option;
 
+    if (option == kFTFx_FlexramFuncOptEEEQuickWrite)
+    {
+        FTFx->FCCOB4 = (uint8_t)(quick_write_bytes >> 0x8U);
+        FTFx->FCCOB5 = (uint8_t)(quick_write_bytes & 0xFFU);
+    }
+    status = ftfx_command_sequence(config);
     /* calling flash command sequence function to execute the command */
-    return ftfx_command_sequence(config);
+    if ((option == kFTFx_FlexramFuncOptEEEStatusQuery) && (status == kStatus_Success))
+    {
+        if (eeprom_status == NULL)
+        {
+            status = kStatus_InvalidArgument;
+        }
+        else
+        {
+            eeprom_status->brownOutCode = FTFx->FCCOB5;
+            eeprom_status->sectorEraseCount = (uint16_t)((uint16_t)FTFx->FCCOB8 << 8U);
+            eeprom_status->sectorEraseCount |= (uint16_t)FTFx->FCCOB9;
+            eeprom_status->numOfRecordReqMaintain = (uint16_t)((uint16_t)FTFx->FCCOB6 << 8U);
+            eeprom_status->numOfRecordReqMaintain |= (uint16_t)FTFx->FCCOB7;
+        }
+    }
+
+
+    return status;
 }
 #endif /* FSL_FEATURE_FLASH_HAS_SET_FLEXRAM_FUNCTION_CMD */
 

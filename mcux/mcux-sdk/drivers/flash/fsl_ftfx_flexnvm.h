@@ -425,7 +425,7 @@ status_t FLEXNVM_SecurityBypass(flexnvm_config_t *config, const uint8_t *backdoo
  * @retval #kStatus_FTFx_ProtectionViolation The program/erase operation is requested to execute on protected areas.
  * @retval #kStatus_FTFx_CommandFailure Run-time error during the command execution.
  */
-status_t FLEXNVM_SetFlexramFunction(flexnvm_config_t *config, ftfx_flexram_func_opt_t option);
+status_t FLEXNVM_SetFlexramFunction(flexnvm_config_t *config, ftfx_flexram_func_opt_t option, uint16_t quick_write_bytes, flash_eeprom_status_t * eeprom_status);
 #endif /* FSL_FEATURE_FLASH_HAS_SET_FLEXRAM_FUNCTION_CMD */
 
 /*! @} */

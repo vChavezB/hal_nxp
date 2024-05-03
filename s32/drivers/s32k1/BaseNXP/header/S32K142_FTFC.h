@@ -78,8 +78,22 @@ typedef struct {
   __IO uint8_t FCNFG;                              /**< Flash Configuration Register, offset: 0x1 */
   __I  uint8_t FSEC;                               /**< Flash Security Register, offset: 0x2 */
   __I  uint8_t FOPT;                               /**< Flash Option Register, offset: 0x3 */
-  __IO uint8_t FCCOB[FTFC_FCCOB_COUNT];            /**< Flash Common Command Object Registers, array offset: 0x4, array step: 0x1 */
-  __IO uint8_t FPROT[FTFC_FPROT_COUNT];            /**< Program Flash Protection Registers, array offset: 0x10, array step: 0x1 */
+  __IO uint8_t FCCOB3;                             /**< Flash Common Command Object Registers, offset: 0x4 */
+  __IO uint8_t FCCOB2;                             /**< Flash Common Command Object Registers, offset: 0x5 */
+  __IO uint8_t FCCOB1;                             /**< Flash Common Command Object Registers, offset: 0x6 */
+  __IO uint8_t FCCOB0;                             /**< Flash Common Command Object Registers, offset: 0x7 */
+  __IO uint8_t FCCOB7;                             /**< Flash Common Command Object Registers, offset: 0x8 */
+  __IO uint8_t FCCOB6;                             /**< Flash Common Command Object Registers, offset: 0x9 */
+  __IO uint8_t FCCOB5;                             /**< Flash Common Command Object Registers, offset: 0xA */
+  __IO uint8_t FCCOB4;                             /**< Flash Common Command Object Registers, offset: 0xB */
+  __IO uint8_t FCCOBB;                             /**< Flash Common Command Object Registers, offset: 0xC */
+  __IO uint8_t FCCOBA;                             /**< Flash Common Command Object Registers, offset: 0xD */
+  __IO uint8_t FCCOB9;                             /**< Flash Common Command Object Registers, offset: 0xE */
+  __IO uint8_t FCCOB8;                             /**< Flash Common Command Object Registers, offset: 0xF */
+  __IO uint8_t FPROT3;                             /**< Program Flash Protection Registers, offset: 0x10 */
+  __IO uint8_t FPROT2;                             /**< Program Flash Protection Registers, offset: 0x11 */
+  __IO uint8_t FPROT1;                             /**< Program Flash Protection Registers, offset: 0x12 */
+  __IO uint8_t FPROT0;                             /**< Program Flash Protection Registers, offset: 0x13 */
   uint8_t RESERVED_0[2];
   __IO uint8_t FEPROT;                             /**< EEPROM Protection Register, offset: 0x16 */
   __IO uint8_t FDPROT;                             /**< Data Flash Protection Register, offset: 0x17 */

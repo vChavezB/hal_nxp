@@ -33,6 +33,129 @@
 #define FSL_FEATURE_SOC_WDOG_COUNT (1)
 /* @brief RTC availability on the SoC. */
 #define FSL_FEATURE_SOC_RTC_COUNT (1)
+/* @brief Is of type FTFC. */
+#define FSL_FEATURE_FLASH_IS_FTFC (1)
+/* @brief Has FlexRAM memory. */
+#define FSL_FEATURE_FLASH_HAS_FLEX_RAM (1)
+/* @brief Has FlexNVM memory. */
+#define FSL_FEATURE_FLASH_HAS_FLEX_NVM (1)
+/* @brief Has flash access control (registers XACCHn, SACCHn, where n is a number, FACSS and FACSN). */
+#define FSL_FEATURE_FLASH_HAS_ACCESS_CONTROL (0)
+#define FTFx_DRIVER_IS_FLASH_RESIDENT (0)
+#define FSL_FEATURE_FLASH_HAS_PROGRAM_PARTITION_CMD (1)
+#define FSL_FEATURE_FLASH_HAS_SET_FLEXRAM_FUNCTION_CMD (1)
+#define FSL_FEATURE_FLASH_HAS_ERASE_ALL_BLOCKS_UNSECURE_CMD (1)
+#define FSL_FEATURE_FLASH_HAS_PROGRAM_SECTION_CMD (1)
+
+/* FLASH module features */
+
+/* @brief FlexNVM write unit size. */
+#define FSL_FEATURE_FLASH_FLEX_NVM_BLOCK_WRITE_UNIT_SIZE (8u)
+/* @brief FlexNVM Erase sector command address alignment. */
+#define FSL_FEATURE_FLASH_FLEX_NVM_SECTOR_CMD_ADDRESS_ALIGMENT (8u)
+/* @brief FlexNVM Rrogram/Verify section command address alignment. */
+#define FSL_FEATURE_FLASH_FLEX_NVM_SECTION_CMD_ADDRESS_ALIGMENT (8u)
+/* @brief P-Flash sector size. */
+#define FSL_FEATURE_FLASH_PFLASH_BLOCK_SECTOR_SIZE (2048u)
+/* @brief P-Flash write unit size. */
+#define FSL_FEATURE_FLASH_PFLASH_BLOCK_WRITE_UNIT_SIZE (8u)
+/* @brief P-Flash Program check command address alignment. */
+#define FSL_FEATURE_FLASH_PFLASH_SWAP_CONTROL_CMD_ADDRESS_ALIGMENT (0)
+/* @brief P-Flash start address. */
+#define FSL_FEATURE_FLASH_PFLASH_START_ADDRESS (0x00000000)
+/* @brief P-Flash block size. */
+#define FSL_FEATURE_FLASH_PFLASH_BLOCK_SIZE (0x40000u)
+/* @brief P-Flash block count. */
+#define FSL_FEATURE_FLASH_PFLASH_BLOCK_COUNT (1u)
+/* @brief P-Flash Program check command address alignment. */
+#define FSL_FEATURE_FLASH_PFLASH_CHECK_CMD_ADDRESS_ALIGMENT (4u)
+/* @brief P-Flash Erase sector command address alignment. */
+#define FSL_FEATURE_FLASH_PFLASH_SECTOR_CMD_ADDRESS_ALIGMENT (8u)
+/* @brief P-Flash Program/Verify section command address alignment. */
+#define FSL_FEATURE_FLASH_PFLASH_SECTION_CMD_ADDRESS_ALIGMENT (8u)
+/* @brief P-Flash Read resource command address alignment. */
+#define FSL_FEATURE_FLASH_PFLASH_RESOURCE_CMD_ADDRESS_ALIGMENT (8u)
+#define FSL_FEATURE_FLASH_PFLASH_PROTECTION_REGION_COUNT (0)
+/* @brief FlexRAM start address. (Valid only if FlexRAM is available.) */
+#define FSL_FEATURE_FLASH_FLEX_RAM_START_ADDRESS (0x14000000u)
+/* @brief FlexRAM size. */
+#define FSL_FEATURE_FLASH_FLEX_RAM_SIZE (4096u)
+/* @brief FlexNVM start address. (Valid only if FlexNVM is available.) */
+#define FSL_FEATURE_FLASH_FLEX_NVM_START_ADDRESS (0x10000000u)
+/* @brief FlexNVM block size. */
+#define FSL_FEATURE_FLASH_FLEX_NVM_BLOCK_SIZE (65536u)
+/* @brief FlexNVM sector size. */
+#define FSL_FEATURE_FLASH_FLEX_NVM_BLOCK_SECTOR_SIZE (2048u)
+/* @brief FlexNVM block count. */
+#define FSL_FEATURE_FLASH_FLEX_NVM_BLOCK_COUNT (1u)
+/* @brief FlexNVM Program check command address alignment. */
+#define FSL_FEATURE_FLASH_FLEX_NVM_CHECK_CMD_ADDRESS_ALIGMENT (4u)
+/* @brief FlexNVM Read resource command address alignment. */
+#define FSL_FEATURE_FLASH_FLEX_NVM_RESOURCE_CMD_ADDRESS_ALIGMENT (8u)
+/* @brief Emulated eeprom size code 0000 mapping to emulated eeprom size in bytes (0xFFFF = reserved). */
+#define FSL_FEATURE_FLASH_FLEX_NVM_EEPROM_SIZE_FOR_EEESIZE_0000 (0xFFFF)
+/* @brief Emulated eeprom size code 0001 mapping to emulated eeprom size in bytes (0xFFFF = reserved). */
+#define FSL_FEATURE_FLASH_FLEX_NVM_EEPROM_SIZE_FOR_EEESIZE_0001 (0xFFFF)
+/* @brief Emulated eeprom size code 0010 mapping to emulated eeprom size in bytes (4 KB). */
+#define FSL_FEATURE_FLASH_FLEX_NVM_EEPROM_SIZE_FOR_EEESIZE_0010 (0x1000)
+/* @brief Emulated eeprom size code 0011 mapping to emulated eeprom size in bytes (0xFFFF = reserved). */
+#define FSL_FEATURE_FLASH_FLEX_NVM_EEPROM_SIZE_FOR_EEESIZE_0011 (0xFFFF)
+/* @brief Emulated eeprom size code 0100 mapping to emulated eeprom size in bytes (0xFFFF = reserved). */
+#define FSL_FEATURE_FLASH_FLEX_NVM_EEPROM_SIZE_FOR_EEESIZE_0100 (0xFFFF)
+/* @brief Emulated eeprom size code 0101 mapping to emulated eeprom size in bytes (0xFFFF = reserved). */
+#define FSL_FEATURE_FLASH_FLEX_NVM_EEPROM_SIZE_FOR_EEESIZE_0101 (0xFFFF)
+/* @brief Emulated eeprom size code 0110 mapping to emulated eeprom size in bytes (0xFFFF = reserved). */
+#define FSL_FEATURE_FLASH_FLEX_NVM_EEPROM_SIZE_FOR_EEESIZE_0110 (0xFFFF)
+/* @brief Emulated eeprom size code 0111 mapping to emulated eeprom size in bytes (0xFFFF = reserved). */
+#define FSL_FEATURE_FLASH_FLEX_NVM_EEPROM_SIZE_FOR_EEESIZE_0111 (0xFFFF)
+/* @brief Emulated eeprom size code 1000 mapping to emulated eeprom size in bytes (0xFFFF = reserved). */
+#define FSL_FEATURE_FLASH_FLEX_NVM_EEPROM_SIZE_FOR_EEESIZE_1000 (0xFFFF)
+/* @brief Emulated eeprom size code 1001 mapping to emulated eeprom size in bytes (0xFFFF = reserved). */
+#define FSL_FEATURE_FLASH_FLEX_NVM_EEPROM_SIZE_FOR_EEESIZE_1001 (0xFFFF)
+/* @brief Emulated eeprom size code 1010 mapping to emulated eeprom size in bytes (0xFFFF = reserved). */
+#define FSL_FEATURE_FLASH_FLEX_NVM_EEPROM_SIZE_FOR_EEESIZE_1010 (0xFFFF)
+/* @brief Emulated eeprom size code 1011 mapping to emulated eeprom size in bytes (0xFFFF = reserved). */
+#define FSL_FEATURE_FLASH_FLEX_NVM_EEPROM_SIZE_FOR_EEESIZE_1011 (0xFFFF)
+/* @brief Emulated eeprom size code 1100 mapping to emulated eeprom size in bytes (0xFFFF = reserved). */
+#define FSL_FEATURE_FLASH_FLEX_NVM_EEPROM_SIZE_FOR_EEESIZE_1100 (0xFFFF)
+/* @brief Emulated eeprom size code 1101 mapping to emulated eeprom size in bytes (0xFFFF = reserved). */
+#define FSL_FEATURE_FLASH_FLEX_NVM_EEPROM_SIZE_FOR_EEESIZE_1101 (0xFFFF)
+/* @brief Emulated eeprom size code 1110 mapping to emulated eeprom size in bytes (0xFFFF = reserved). */
+#define FSL_FEATURE_FLASH_FLEX_NVM_EEPROM_SIZE_FOR_EEESIZE_1110 (0xFFFF)
+/* @brief Emulated eeprom size code 1111 mapping to emulated eeprom size in bytes */
+#define FSL_FEATURE_FLASH_FLEX_NVM_EEPROM_SIZE_FOR_EEESIZE_1111 (0)
+/* @brief FlexNVM partition code 0000 mapping to data flash size in bytes (64 KB). */
+#define FSL_FEATURE_FLASH_FLEX_NVM_DFLASH_SIZE_FOR_DEPART_0000 (0x10000) 
+/* @brief FlexNVM partition code 0001 mapping to data flash size in bytes (0xFFFFFFFF = reserved). */
+#define FSL_FEATURE_FLASH_FLEX_NVM_DFLASH_SIZE_FOR_DEPART_0001 (0xFFFFFFFFU)
+/* @brief FlexNVM partition code 0010 mapping to data flash size in bytes (0xFFFFFFFF = reserved). */
+#define FSL_FEATURE_FLASH_FLEX_NVM_DFLASH_SIZE_FOR_DEPART_0010 (0xFFFFFFFFU)
+/* @brief FlexNVM partition code 0011 mapping to data flash size in bytes (32 KB) */
+#define FSL_FEATURE_FLASH_FLEX_NVM_DFLASH_SIZE_FOR_DEPART_0011 (0x8000)
+/* @brief FlexNVM partition code 0100 mapping to data flash size in bytes */
+#define FSL_FEATURE_FLASH_FLEX_NVM_DFLASH_SIZE_FOR_DEPART_0100 (0x0)
+/* @brief FlexNVM partition code 0101 mapping to data flash size in bytes (0xFFFFFFFF = reserved). */
+#define FSL_FEATURE_FLASH_FLEX_NVM_DFLASH_SIZE_FOR_DEPART_0101 (0xFFFFFFFFU)
+/* @brief FlexNVM partition code 0110 mapping to data flash size in bytes (0xFFFFFFFF = reserved). */
+#define FSL_FEATURE_FLASH_FLEX_NVM_DFLASH_SIZE_FOR_DEPART_0110 (0xFFFFFFFFU)
+/* @brief FlexNVM partition code 0111 mapping to data flash size in bytes (0xFFFFFFFF = reserved). */
+#define FSL_FEATURE_FLASH_FLEX_NVM_DFLASH_SIZE_FOR_DEPART_0111 (0xFFFFFFFFU)
+/* @brief FlexNVM partition code 1000 mapping to data flash size in bytes. */
+#define FSL_FEATURE_FLASH_FLEX_NVM_DFLASH_SIZE_FOR_DEPART_1000 (0)
+/* @brief FlexNVM partition code 1001 mapping to data flash size in bytes (0xFFFFFFFF = reserved). */
+#define FSL_FEATURE_FLASH_FLEX_NVM_DFLASH_SIZE_FOR_DEPART_1001 (0xFFFFFFFFU)
+/* @brief FlexNVM partition code 1010 mapping to data flash size in bytes (16 KB). */
+#define FSL_FEATURE_FLASH_FLEX_NVM_DFLASH_SIZE_FOR_DEPART_1010 (0x4000)
+/* @brief FlexNVM partition code 1011 mapping to data flash size in bytes (32 KB). */
+#define FSL_FEATURE_FLASH_FLEX_NVM_DFLASH_SIZE_FOR_DEPART_1011 (0x8000)
+/* @brief FlexNVM partition code 1100 mapping to data flash size in bytes (64 KB)*/
+#define FSL_FEATURE_FLASH_FLEX_NVM_DFLASH_SIZE_FOR_DEPART_1100 (0x10000)
+/* @brief FlexNVM partition code 1101 mapping to data flash size in bytes (0xFFFFFFFF = reserved). */
+#define FSL_FEATURE_FLASH_FLEX_NVM_DFLASH_SIZE_FOR_DEPART_1101 (0xFFFFFFFFU)
+/* @brief FlexNVM partition code 1110 mapping to data flash size in bytes (0xFFFFFFFF = reserved). */
+#define FSL_FEATURE_FLASH_FLEX_NVM_DFLASH_SIZE_FOR_DEPART_1110 (0xFFFFFFFFU)
+/* @brief FlexNVM partition code 1111 mapping to data flash size in bytes (0xFFFFFFFF = reserved). */
+#define FSL_FEATURE_FLASH_FLEX_NVM_DFLASH_SIZE_FOR_DEPART_1111 (0xFFFFFFFFU)
 
 /* ADC12 module features */
 

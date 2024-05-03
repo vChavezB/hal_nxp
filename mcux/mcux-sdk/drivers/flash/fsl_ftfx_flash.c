@@ -461,7 +461,7 @@ status_t FLASH_SecurityBypass(flash_config_t *config, const uint8_t *backdoorKey
  */
 status_t FLASH_SetFlexramFunction(flash_config_t *config, ftfx_flexram_func_opt_t option)
 {
-    return FTFx_CMD_SetFlexramFunction(&config->ftfxConfig[0], option);
+    return FTFx_CMD_SetFlexramFunction(&config->ftfxConfig[0], option,0,NULL);
 }
 #endif
 

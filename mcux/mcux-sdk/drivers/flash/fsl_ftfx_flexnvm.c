@@ -65,12 +65,13 @@ status_t FLEXNVM_Init(flexnvm_config_t *config)
     /* Init FTFx Kernel */
     FTFx_API_Init(&config->ftfxConfig);
 
+#if !defined(MCU_S32K142)
     returnCode = FTFx_API_UpdateFlexnvmPartitionStatus(&config->ftfxConfig);
     if (returnCode != kStatus_FTFx_Success)
     {
         return returnCode;
     }
-
+#endif
     return kStatus_FTFx_Success;
 }
 
@@ -231,9 +232,9 @@ status_t FLEXNVM_SecurityBypass(flexnvm_config_t *config, const uint8_t *backdoo
 /*!
  * @brief Sets the FlexRAM function command.
  */
-status_t FLEXNVM_SetFlexramFunction(flexnvm_config_t *config, ftfx_flexram_func_opt_t option)
+status_t FLEXNVM_SetFlexramFunction(flexnvm_config_t *config, ftfx_flexram_func_opt_t option, uint16_t quick_write_bytes,flash_eeprom_status_t * eeprom_status)
 {
-    return FTFx_CMD_SetFlexramFunction(&config->ftfxConfig, option);
+    return FTFx_CMD_SetFlexramFunction(&config->ftfxConfig, option, quick_write_bytes,eeprom_status);
 }
 #endif /* FSL_FEATURE_FLASH_HAS_SET_FLEXRAM_FUNCTION_CMD */
 
@@ -264,7 +265,7 @@ status_t FLEXNVM_EepromWrite(flexnvm_config_t *config, uint32_t start, uint8_t *
     {
         needSwitchFlexRamMode = true;
 
-        returnCode = FTFx_CMD_SetFlexramFunction(&config->ftfxConfig, kFTFx_FlexramFuncOptAvailableForEeprom);
+        returnCode = FTFx_CMD_SetFlexramFunction(&config->ftfxConfig, kFTFx_FlexramFuncOptAvailableForEeprom, 0, NULL);
         if (returnCode != kStatus_FTFx_Success)
         {
             return kStatus_FTFx_SetFlexramAsEepromError;
@@ -274,6 +275,7 @@ status_t FLEXNVM_EepromWrite(flexnvm_config_t *config, uint32_t start, uint8_t *
     /* Write data to FlexRAM when it is used as EEPROM emulator */
     while (lengthInBytes > 0U)
     {
+        /* Dest is 32bit-aligned and size is not less than 4 */
         if ((0U == (start & 0x3U)) && (0U == ((uint32_t)src & 0x3U)) && (lengthInBytes >= 4U))
         {
             *(uint32_t *)start = *(uint32_t *)(uint32_t)src;
@@ -310,7 +312,7 @@ status_t FLEXNVM_EepromWrite(flexnvm_config_t *config, uint32_t start, uint8_t *
     /* Switch function of FlexRAM if needed */
     if (needSwitchFlexRamMode)
     {
-        returnCode = FTFx_CMD_SetFlexramFunction(&config->ftfxConfig, kFTFx_FlexramFuncOptAvailableAsRam);
+        returnCode = FTFx_CMD_SetFlexramFunction(&config->ftfxConfig, kFTFx_FlexramFuncOptAvailableAsRam, 0, NULL);
         if (returnCode != kStatus_FTFx_Success)
         {
             return kStatus_FTFx_RecoverFlexramAsRamError;

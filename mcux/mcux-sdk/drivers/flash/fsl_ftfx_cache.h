@@ -30,6 +30,15 @@ typedef struct _flash_prefetch_speculation_status
 } ftfx_prefetch_speculation_status_t;
 
 /*!
+ * @brief Enumeration for the flash memory index.
+ */
+typedef enum _flash_memory_index
+{
+    kFLASH_MemoryIndexPrimaryFlash   = 0x00U, /*!< Current flash memory is primary flash.*/
+    kFLASH_MemoryIndexSecondaryFlash = 0x01U, /*!< Current flash memory is secondary flash.*/
+} flash_memory_index_t;
+
+/*!
  * @brief Constants for execute-in-RAM flash function.
  */
 enum _ftfx_cache_ram_func_constants

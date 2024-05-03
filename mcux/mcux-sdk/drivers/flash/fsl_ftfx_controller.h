@@ -40,6 +40,20 @@
 #endif
 /*! @endcond */
 
+
+/*!
+ * @brief EEPROM status structure
+ *
+ * Implements : flash_eeprom_status_t_Class
+ */
+typedef struct
+{
+    uint8_t brownOutCode;               /*!< Brown-out detection code */
+    uint16_t numOfRecordReqMaintain;    /*!< Number of EEPROM quick write records requiring maintenance */
+    uint16_t sectorEraseCount;          /*!< EEPROM sector erase count */
+} flash_eeprom_status_t;
+
+
 /*!
  * @brief FTFx driver status codes.
  */
@@ -150,6 +164,9 @@ typedef enum _ftfx_security_state
 typedef enum _ftfx_flexram_function_option
 {
     kFTFx_FlexramFuncOptAvailableAsRam     = 0xFFU, /*!< An option used to make FlexRAM available as RAM */
+    kFTFx_FlexramFuncOptEEEQuickWrite                         = 0x55U,    /*!< Make FlexRAM available for EEPROM quick writes */
+    kFTFx_FlexramFuncOptEEEStatusQuery                     = 0x77U,    /*!< EEPROM quick write status query */
+    kFTFx_FlexramFuncOptEEECompleteInterruptQuickWrite      = 0xAAU,    /*!< Complete interrupted EEPROM quick write process */
     kFTFx_FlexramFuncOptAvailableForEeprom = 0x00U  /*!< An option used to make FlexRAM available for EEPROM */
 } ftfx_flexram_func_opt_t;
 
@@ -804,7 +821,7 @@ status_t FTFx_CMD_SecurityBypass(ftfx_config_t *config, const uint8_t *backdoorK
  * @retval #kStatus_FTFx_ProtectionViolation The program/erase operation is requested to execute on protected areas.
  * @retval #kStatus_FTFx_CommandFailure Run-time error during the command execution.
  */
-status_t FTFx_CMD_SetFlexramFunction(ftfx_config_t *config, ftfx_flexram_func_opt_t option);
+status_t FTFx_CMD_SetFlexramFunction(ftfx_config_t *config, ftfx_flexram_func_opt_t option,uint16_t quick_write_bytes,flash_eeprom_status_t * eeprom_status);
 #endif /* FSL_FEATURE_FLASH_HAS_SET_FLEXRAM_FUNCTION_CMD */
 
 /*! @} */
