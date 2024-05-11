@@ -93,7 +93,7 @@ if(CONFIG_HAS_MCUX)
   if(${MCUX_DEVICE} MATCHES "S32K1")
     zephyr_include_directories(${CMAKE_CURRENT_LIST_DIR}/../mcux/mcux-sdk/drivers/port)
     include_mcux_driver_ifdef(CONFIG_PINCTRL port driver_port)
-    include_mcux_driver_ifdef(CONFIG_HAS_MCUX_FLEXCAN flash driver_flash)
+    include_mcux_driver_ifdef(CONFIG_FLASH flash driver_flash)
 
     zephyr_include_directories(${CMAKE_CURRENT_LIST_DIR}/../mcux/mcux-sdk/drivers/sysmpu)
     include_mcux_driver_ifdef(CONFIG_ARM_MPU sysmpu driver_sysmpu)
