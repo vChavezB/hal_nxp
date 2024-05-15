@@ -55,6 +55,8 @@
 #define FSL_FEATURE_FLASH_FLEX_NVM_SECTOR_CMD_ADDRESS_ALIGMENT (8u)
 /* @brief FlexNVM Rrogram/Verify section command address alignment. */
 #define FSL_FEATURE_FLASH_FLEX_NVM_SECTION_CMD_ADDRESS_ALIGMENT (8u)
+/* @brief P-Flash block size. */
+#define FSL_FEATURE_FLASH_PFLASH_BLOCK_SIZE (0x40000u)
 /* @brief P-Flash sector size. */
 #define FSL_FEATURE_FLASH_PFLASH_BLOCK_SECTOR_SIZE (2048u)
 /* @brief P-Flash write unit size. */
@@ -63,8 +65,6 @@
 #define FSL_FEATURE_FLASH_PFLASH_SWAP_CONTROL_CMD_ADDRESS_ALIGMENT (0)
 /* @brief P-Flash start address. */
 #define FSL_FEATURE_FLASH_PFLASH_START_ADDRESS (0x00000000)
-/* @brief P-Flash block size. */
-#define FSL_FEATURE_FLASH_PFLASH_BLOCK_SIZE (0x40000u)
 /* @brief P-Flash block count. */
 #define FSL_FEATURE_FLASH_PFLASH_BLOCK_COUNT (1u)
 /* @brief P-Flash Program check command address alignment. */
@@ -431,5 +431,6 @@
 #define FSL_FEATURE_RTC_HAS_PCR (0)
 /* @brief Has Oscillator Enable(bitfield CR[OSCE]). */
 #define FSL_FEATURE_RTC_HAS_NO_CR_OSCE (1)
+
 
 #endif /* _S32K142_FEATURES_H_ */
