@@ -105,7 +105,7 @@ extern "C"{
 /* *************************************************************************
  * Configuration structure for Clock Configuration
  * ************************************************************************* */
-const Clock_Ip_ClockConfigType Clock_Ip_aClockConfig[1U] = {
+const __attribute__((weak))  Clock_Ip_ClockConfigType Clock_Ip_aClockConfig[1U] = {
 
     {
         0U,                          /* clkConfigId */
