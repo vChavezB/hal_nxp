@@ -9,6 +9,7 @@
 
 /* SOC module features */
 
+#define FSL_FEATURE_SMC_HAS_PSTOPO (1)
 /* @brief SYSMPU availability on the SoC. */
 #define FSL_FEATURE_SOC_SYSMPU_COUNT (1)
 /* @brief ADC12 availability on the SoC. */
@@ -372,7 +373,7 @@
 /* @brief Has enhanced bit timing register (register EPRS, ENCBT, EDCBT and ETDC). */
 #define FSL_FEATURE_FLEXCAN_HAS_ENHANCED_BIT_TIMING_REG (0)
 /* @brief Has Pretended Networking mode support. */
-#define FSL_FEATURE_FLEXCAN_HAS_PN_MODE (0)
+#define FSL_FEATURE_FLEXCAN_HAS_PN_MODE (1)
 /* @brief Has Enhanced Rx FIFO. */
 #define FSL_FEATURE_FLEXCAN_HAS_ENHANCED_RX_FIFO (0)
 /* @brief Does not support Supervisor Mode (bitfield MCR[SUPV]. */

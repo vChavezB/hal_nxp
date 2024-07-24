@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 
 zephyr_include_directories(header include)
+zephyr_library_named(basenxp_osif)
 zephyr_library_sources(
   src/OsIf_Interrupts.c
   src/OsIf_Timer.c

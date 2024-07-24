@@ -161,6 +161,7 @@ typedef struct {
 /*! @{ */
 
 #define SMC_PMCTRL_STOPM_MASK                    (0x7U)
+#define SMC_PMCTRL_STOPA_MASK                    (0x7U) // Compatiblity for mcux smc driver
 #define SMC_PMCTRL_STOPM_SHIFT                   (0U)
 #define SMC_PMCTRL_STOPM_WIDTH                   (3U)
 #define SMC_PMCTRL_STOPM(x)                      (((uint32_t)(((uint32_t)(x)) << SMC_PMCTRL_STOPM_SHIFT)) & SMC_PMCTRL_STOPM_MASK)
@@ -180,7 +181,9 @@ typedef struct {
 /*! @{ */
 
 #define SMC_STOPCTRL_STOPO_MASK                  (0xC0U)
+#define SMC_STOPCTRL_PSTOPO_MASK                 (0xC0U) // Compatiblity for mcux smc driver
 #define SMC_STOPCTRL_STOPO_SHIFT                 (6U)
+#define SMC_STOPCTRL_PSTOPO_SHIFT                (6U)  // Compatiblity for mcux smc driver
 #define SMC_STOPCTRL_STOPO_WIDTH                 (2U)
 #define SMC_STOPCTRL_STOPO(x)                    (((uint32_t)(((uint32_t)(x)) << SMC_STOPCTRL_STOPO_SHIFT)) & SMC_STOPCTRL_STOPO_MASK)
 /*! @} */

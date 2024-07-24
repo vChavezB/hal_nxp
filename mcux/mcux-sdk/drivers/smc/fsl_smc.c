@@ -230,7 +230,7 @@ status_t SMC_SetPowerModeStop(SMC_Type *base, smc_partial_stop_option_t option)
 
     /* read back to make sure the configuration valid before enter stop mode */
     (void)base->PMCTRL;
-    SMC_EnterStopRamFunc();
+    //SMC_EnterStopRamFunc();
 
     /* check whether the power mode enter Stop mode succeed */
     if (0U != (base->PMCTRL & SMC_PMCTRL_STOPA_MASK))
