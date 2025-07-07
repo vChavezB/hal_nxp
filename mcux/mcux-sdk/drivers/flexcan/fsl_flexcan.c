@@ -564,15 +564,145 @@ void FLEXCAN_EnterFreezeMode(CAN_Type *base)
     }
 }
 #else
+/*!
+ * @brief Get freeze status of the FlexCAN module.
+ *
+ * @param   base     The FlexCAN base address
+ * @return  true if module is in freeze mode; false if module is not in freeze mode
+ */
+static inline bool FLEXCAN_GetFreezeMode(const CAN_Type * base)
+{
+    return ((base->MCR & CAN_MCR_FRZACK_MASK) == CAN_MCR_FRZACK_MASK);
+}
+/*!
+ * @brief Checks if the Flexible Data rate feature is enabled.
+ *
+ * @param   base    The FlexCAN base address
+ * @return  true if enabled; false if disabled
+ */
+static inline bool FLEXCAN_IsFDEnabled(const CAN_Type * base)
+{
+    return (((base->MCR & CAN_MCR_FDEN_MASK) >> CAN_MCR_FDEN_SHIFT) != 0U);
+}
+
 void FLEXCAN_EnterFreezeMode(CAN_Type *base)
 {
-    /* Set Freeze, Halt bits. */
+    // S32K1xx Series Reference Manual, Rev. 13, 
+    // 55.1.9.1 Freeze mode entry
+    uint32_t timeout_cnt = 0U;
+    bool enabled = false;
+
+    /* 1. Set Freeze, Halt bits. */
     base->MCR |= CAN_MCR_FRZ_MASK;
     base->MCR |= CAN_MCR_HALT_MASK;
-    while (0U == (base->MCR & CAN_MCR_FRZACK_MASK))
+
+    /* 2. Check whether CAN_MCR[MDIS] (Module Disable) is set to 1. If it is, clear it to 0. */
+    enabled = (base->MCR & CAN_MCR_MDIS_MASK) == 0U;
+    if (((base->MCR & CAN_MCR_MDIS_MASK) >> CAN_MCR_MDIS_SHIFT) == 0U)
     {
+        enabled = true;
+    }
+    else
+    {
+        base->MCR &= ~CAN_MCR_MDIS_MASK;
+    }
+    /* 3. Poll the MCR register until CAN_MCR[FRZACK] (Freeze Mode Acknowledge)
+        is set to 1 or the timeout is reached
+        The minimum timeout duration must be equivalent to:
+            a. 730 CAN Nominal bits if CAN_MCR[FDEN] (CAN
+            FD Operation Enable) is set to 1 (CAN bits calculated
+            at arbitration bit rate),
+            b. 180 CAN bits if CAN_MCR[FDEN] is cleared to 0.
+    */
+    base->TIMER = 0U;
+#if (defined(FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE) && FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE)
+    /* MCR[FDEN] was reset to 0, wait for timeout */
+    if (!FLEXCAN_IsFDEnabled(base))
+    {
+        while (!FLEXCAN_GetFreezeMode(base) && (timeout_cnt < 180U))
+        {
+            /* Wait until finish counting 180 bit times and exit*/
+            timeout_cnt = (uint32_t)base->TIMER;
+        }
+    }
+    else
+    {
+        while (!FLEXCAN_GetFreezeMode(base) && (timeout_cnt < 730U))
+        {
+            /* Wait until finish counting 730 bit times and exit*/
+            timeout_cnt = (uint32_t)base->TIMER;
+        }
+    }
+#else
+    while (!FLEXCAN_GetFreezeMode(base) && (timeout_cnt < 180U))
+    {
+        /* Wait until finish counting 180 bit times and exit*/
+        timeout_cnt = (uint32_t)base->TIMER;
+    }
+#endif /* FSL_FEATURE_FLEXCAN_HAS_FLEXIBLE_DATA_RATE  */
+
+    /* 4. If CAN_MCR[FRZACK] is set to 1, no further action is required. Skip steps 5 to 8.*/
+    if (!FLEXCAN_GetFreezeMode(base))
+    {
+        /* If the timeout is reached because CAN_MCR[FRZACK] remains cleared to 0,
+            then set CAN_MCR[SOFTRST] (Soft Reset) to 1.
+            Note: This requires saving the current state of the FlexCAN registers.
+        */
+        /* Save registers before Soft Reset */
+        uint32_t tempIMSK1 =0, tempMCR = 0;
+        /* Save IMASK1 value */
+        tempIMSK1 = base->IMASK1;
+#if (defined(FSL_FEATURE_FLEXCAN_HAS_EXTENDED_FLAG_REGISTER)) && (FSL_FEATURE_FLEXCAN_HAS_EXTENDED_FLAG_REGISTER > 0)
+        const uint32_t max_mb = (uint32_t)FSL_FEATURE_FLEXCAN_HAS_MESSAGE_BUFFER_MAX_NUMBERn(base);
+        uint32_t tempIMSK2 = 0, tempIMSK3 = 0; 
+        if (max_mb > 32U)
+        {
+            /* Save IMASK2 value */
+            tempIMSK2 = base->IMASK2;
+        }
+        if (max_mb > 64U)
+        {
+            /* Save IMASK3 value */
+            tempIMSK3 = base->IMASK3;
+        }
+#endif /* FSL_FEATURE_FLEXCAN_HAS_EXTENDED_FLAG_REGISTER */
+        /* Save MCR value */
+        tempMCR = base->MCR;
+
+        /* Soft Reset FlexCan */
+        base->MCR |= CAN_MCR_SOFTRST_MASK;
+        /* 6. Poll MCR until CAN_MCR[SOFTRST] is cleared to 0 */
+        while (0U != (base->MCR & CAN_MCR_SOFTRST_MASK))
+        {
+        }
+        /* Restore IMASK1 value */
+        base->IMASK1 = tempIMSK1;
+#if (defined(FSL_FEATURE_FLEXCAN_HAS_EXTENDED_FLAG_REGISTER)) && (FSL_FEATURE_FLEXCAN_HAS_EXTENDED_FLAG_REGISTER > 0)
+        if (max_mb > 32U)
+        {
+            /* Restore IMASK2 value */
+            base->IMASK2 = tempIMSK2;
+        }
+        if (max_mb > 64U)
+        {
+            /* Restore IMASK3 value */
+            base->IMASK3 = tempIMSK3;
+        }
+#endif /* FSL_FEATURE_FLEXCAN_HAS_EXTENDED_FLAG_REGISTER */
+        /* 7. Reconfigure the Module Control register (CAN_MCR) */
+        base->MCR = tempMCR;
+
+    }
+    if (!enabled)
+    {
+        base->MCR |= CAN_MCR_MDIS_MASK;
+        /* Wait until disable mode acknowledged */
+        while (((base->MCR & CAN_MCR_LPMACK_MASK) >> CAN_MCR_LPMACK_SHIFT) == 0U) {}
     }
 }
+
+
+
 #endif
 
 /*!
